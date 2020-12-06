@@ -1,7 +1,12 @@
-import {Button} from 'antd'; 
+import { Button } from "antd";
+import { Link } from "react-router-dom";
 
 export const HomePage = () => {
-  return <Button type="primary">CIAO</Button>;
-}
+  return (
+    <Link to="/login">
+      <Button type="primary">CIAO</Button>
+    </Link>
+  );
+};
 
 export default HomePage;

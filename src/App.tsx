@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import "./App.css";
-import { Switch, Route } from "react-router-dom";
-
-import Signup from "../Auth/Signup";
-import Login from "../Auth/Login";
-import ProtectedRoute from "../Auth/ProtectedRoute";
-
-import Navbar from "../Navbar/Navbar";
-import ProjectList from "../Projects/ProjectList";
-import ProjectDetails from "../Projects/ProjectDetails";
-import TaskDetails from "../Tasks/TaskDetails";
-
-import AuthService from "../../services/auth-service";
+import "./App.less";
+import {
+  Switch,
+  Route,
+  BrowserRouter as Router,
+  Redirect,
+} from "react-router-dom";
+import HomePage from "./screens/HomePage";
+import Login from "./screens/auth/Login";
+import AuthService from "./services/auth-service";
+import ProtectedRoute from "./components/ProtectedRoute.js";
+import UserPage from "./screens/user/UserPage";
+import NavBar from "./components/NavBar";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<any>(null);
@@ -23,75 +23,48 @@ function App() {
     if (loggedInUser === null) {
       service
         .isAuthenticated()
-        .then((response:any) => {
+        .then((response) => {
           setLoggedInUser(response);
         })
-        .catch((err:string) => {
+        .catch((err) => {
           setLoggedInUser(false);
         });
     }
   };
 
   // Function to help get the loggedIn user
-  const getLoggedInUser = (userObject:object) => {
+  const getLoggedInUser = (userObject: object) => {
     setLoggedInUser(userObject);
   };
 
   // Run to check if user is authenticated
   fetchUser();
 
-  return loggedInUser ? (
+  return (
     <section className="App">
-      <Navbar userInSession={loggedInUser} getUser={getLoggedInUser} />
-      <Switch>
-        <ProtectedRoute
-          user={loggedInUser}
-          path="/projects/:id/tasks/:taskId"
-          component={TaskDetails}
-        />
-        <ProtectedRoute
-          user={loggedInUser}
-          path="/projects/:id"
-          component={ProjectDetails}
-        />
-        <ProtectedRoute
-          user={loggedInUser}
-          path="/projects"
-          component={ProjectList}
-        />
-      </Switch>
-    </section>
-  ) : (
-    <section className="App">
-      <Navbar userInSession={loggedInUser} getUser={getLoggedInUser} />
-
-      <Switch>
-        <Route
-          exact
-          path="/signup"
-          render={() => <Signup getUser={getLoggedInUser} />}
-        />
-        <Route
-          exact
-          path="/"
-          render={() => <Login getUser={getLoggedInUser} />}
-        />
-        <ProtectedRoute
-          user={loggedInUser}
-          path="/projects/:id/tasks/:taskId"
-          component={TaskDetails}
-        />
-        <ProtectedRoute
-          user={loggedInUser}
-          path="/projects/:id"
-          component={ProjectDetails}
-        />
-        <ProtectedRoute
-          user={loggedInUser}
-          path="/projects"
-          component={ProjectList}
-        />
-      </Switch>
+      <Router>
+        <NavBar userInSession={loggedInUser} getUser={getLoggedInUser} />
+        <Switch>
+          <ProtectedRoute
+            user={loggedInUser}
+            getUser={getLoggedInUser}
+            path="/home"
+            component={UserPage}
+          />
+          <Route path="/" exact component={HomePage} />
+          <Route
+            path="/login"
+            exact
+            render={() =>
+              !loggedInUser ? (
+                <Login getUser={getLoggedInUser} />
+              ) : (
+                <Redirect to="/home" />
+              )
+            }
+          />
+        </Switch>
+      </Router>
     </section>
   );
 }
