@@ -1,7 +1,7 @@
-import React from "react";
+import {Button} from 'antd'; 
 
-function HomePage() {
-  return <div>CIAO</div>;
+export const HomePage = () => {
+  return <Button type="primary">CIAO</Button>;
 }
 
 export default HomePage;
