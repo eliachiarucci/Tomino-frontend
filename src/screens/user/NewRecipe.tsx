@@ -1,24 +1,45 @@
 import React, { useEffect, useState } from "react";
 import FlexContainer from "flexcontainer-react";
-import { Form, Input, Button, Space, Select, Switch, TimePicker, Tooltip, Upload } from "antd";
+import { Form, Input, Button, Space, Select, Switch, TimePicker, Tooltip, Upload, message } from "antd";
 import { MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import env from "../../env";
+import recipeService from "../../services/recipe-service";
+import { useHistory } from "react-router-dom";
+const RecipeService = new recipeService();
 const { TextArea } = Input;
 const { Option } = Select;
 
 const NewRecipe = () => {
   const [form] = Form.useForm();
   const [formValue, setFormValue] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const history = useHistory();
 
   const onFinish = (values: any) => {
+    setLoading(true);
+    try {
+      values.steps.forEach((step: any) => {
+        if (!step.timer) {
+          step.time = 0;
+          step.timer = false;
+        } else step.time = moment.duration(step.time.format("HH:mm:ss")).asSeconds();
+      });
+      values.preparationtime = moment.duration(values.preparationtime.format("HH:mm:ss")).asSeconds();
+      values.image = values.image[0].response.cloudinaryUrl;
+    } catch (e) {
+      setLoading(false);
+      message.error("Something went wrong with the compilation of the forms, please fill all the required inputs");
+      return;
+    }
     console.log("Received values of form:", values);
-    values.steps.forEach((step: any) => {
-      if (!step.timer) {
-        step.time = 0;
-        step.timer = false;
-      } else step.time = moment.duration(values.steps[0].time.format("HH:mm:ss")).asSeconds();
-    });
+    RecipeService.addRecipe(values)
+      .then((response) => history.push("/home"))
+      .catch((err) => {
+        console.log(err.response.data.message);
+        message.error(err.response.data.message);
+        setLoading(false);
+      });
   };
 
   const normFile = (e: any) => {
@@ -83,29 +104,30 @@ const NewRecipe = () => {
         >
           <TextArea rows={4} placeholder="description" name="description" />
         </Form.Item>
+
+        <Form.Item
+          name="preparationtime"
+          label="Preparation Time"
+          rules={[{ required: true, message: "Please add a preparation time" }]}
+        >
+          <TimePicker defaultValue={moment("00:00:00", "HH:mm:ss")} />
+        </Form.Item>
+
         <h4>Ingredients</h4>
         <Form.List name="ingredients">
           {(fields, { add, remove }) => (
             <div style={{ display: "flex", flexDirection: "column" }}>
               {fields.map((field) => (
                 <Space key={field.key} align="baseline">
+                  <MinusCircleOutlined onClick={() => remove(field.name)} />
                   <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, curValues) =>
-                      prevValues.area !== curValues.area || prevValues.steps !== curValues.steps
-                    }
+                    {...field}
+                    label="Name"
+                    name={[field.name, "name"]}
+                    fieldKey={[field.fieldKey, "name"]}
+                    rules={[{ required: true, message: "Missing name" }]}
                   >
-                    {() => (
-                      <Form.Item
-                        {...field}
-                        label="Name"
-                        name={[field.name, "name"]}
-                        fieldKey={[field.fieldKey, "name"]}
-                        rules={[{ required: true, message: "Missing name" }]}
-                      >
-                        <Input style={{ width: 130 }}></Input>
-                      </Form.Item>
-                    )}
+                    <Input style={{ width: 130 }}></Input>
                   </Form.Item>
 
                   <Form.Item
@@ -125,7 +147,7 @@ const NewRecipe = () => {
                     fieldKey={[field.fieldKey, "Unit"]}
                     initialValue="g"
                   >
-                    <Select defaultValue="g" style={{ width: 120 }}>
+                    <Select style={{ width: 120 }}>
                       <Option value="g">g</Option>
                       <Option value="kg">kg</Option>
                       <Option value="pieces">pieces</Option>
@@ -149,23 +171,15 @@ const NewRecipe = () => {
             <div style={{ display: "flex", flexDirection: "column" }}>
               {fields.map((field) => (
                 <Space key={field.key} align="baseline">
+                  <MinusCircleOutlined onClick={() => remove(field.name)} />
                   <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, curValues) =>
-                      prevValues.area !== curValues.area || prevValues.steps !== curValues.steps
-                    }
+                    {...field}
+                    label="Name"
+                    name={[field.name, "name"]}
+                    fieldKey={[field.fieldKey, "name"]}
+                    rules={[{ required: true, message: "Missing name" }]}
                   >
-                    {() => (
-                      <Form.Item
-                        {...field}
-                        label="Name"
-                        name={[field.name, "name"]}
-                        fieldKey={[field.fieldKey, "name"]}
-                        rules={[{ required: true, message: "Missing name" }]}
-                      >
-                        <Input style={{ width: 130 }}></Input>
-                      </Form.Item>
-                    )}
+                    <Input style={{ width: 130 }}></Input>
                   </Form.Item>
 
                   <Form.Item
@@ -175,7 +189,7 @@ const NewRecipe = () => {
                     fieldKey={[field.fieldKey, "Description"]}
                     rules={[{ required: true, message: "Missing description" }]}
                   >
-                    <Input />
+                    <TextArea />
                   </Form.Item>
 
                   <Form.Item label="Timer" valuePropName="checked" name={[field.name, "timer"]}>
@@ -190,8 +204,6 @@ const NewRecipe = () => {
                       <TimePicker defaultValue={moment("00:00:00", "HH:mm:ss")} />
                     </Form.Item>
                   ) : null}
-
-                  <MinusCircleOutlined onClick={() => remove(field.name)} />
                 </Space>
               ))}
 
@@ -204,12 +216,54 @@ const NewRecipe = () => {
           )}
         </Form.List>
 
+        <h4>Conservation time</h4>
+        <Form.List name="conservationtimes">
+          {(fields, { add, remove }) => (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {fields.map((field) => (
+                <Space key={field.key} align="baseline">
+                  <MinusCircleOutlined onClick={() => remove(field.name)} />
+                  <Form.Item
+                    {...field}
+                    label="Conservation Time (days)"
+                    name={[field.name, "conservationtime"]}
+                    fieldKey={[field.fieldKey, "conservationtime"]}
+                    rules={[{ required: true, message: "Missing conservation time" }]}
+                  >
+                    <Input type="number" style={{ width: 130 }}></Input>
+                  </Form.Item>
+
+                  <Form.Item
+                    {...field}
+                    label="Storage location"
+                    name={[field.name, "storagelocation"]}
+                    fieldKey={[field.fieldKey, "storagelocation"]}
+                    initialValue="fridge"
+                  >
+                    <Select defaultValue="fridge" style={{ width: 120 }}>
+                      <Option value="fridge">fridge</Option>
+                      <Option value="refrigerator">refrigerator</Option>
+                      <Option value="cool and dry place">cool and dry place</Option>
+                    </Select>
+                  </Form.Item>
+                </Space>
+              ))}
+
+              <Form.Item>
+                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                  Add conservation time
+                </Button>
+              </Form.Item>
+            </div>
+          )}
+        </Form.List>
+
         <Form.Item label="Tags" name="tags">
           <Select mode="tags" style={{ width: "100%" }} placeholder="Tags Mode"></Select>
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="form-button">
+          <Button loading={loading} type="primary" htmlType="submit" className="form-button">
             Create Recipe
           </Button>
         </Form.Item>
