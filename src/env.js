@@ -5,7 +5,7 @@ const dev = {
 
 const prod = {
   URL: "prod",
-  SERVER_URL: ""
+  SERVER_URL: "http://localhost:5000"
 };
 
 const env = process.env.NODE_ENV === "production" ? prod : dev;

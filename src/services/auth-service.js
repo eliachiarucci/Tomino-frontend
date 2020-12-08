@@ -12,16 +12,16 @@ class AuthService {
   }
 
   // Method to use in our SignUp component
-  signup = (username, password) => {
+  signup = (username, email, password, image) => {
     return this.service
-      .post("/signup", { username, password })
-      .then((response) => response.data);
+      .post("/signup", { username, email, password, image })
+      .then(response => response.data)
   };
 
   // Method to use in our Login component
-  login = (username, password) => {
+  login = (email, password) => {
     return this.service
-      .post("/login", { username, password })
+      .post("/login", { email, password })
       .then((response) => response.data);
   };
 

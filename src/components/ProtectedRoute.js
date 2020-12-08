@@ -14,6 +14,7 @@ const ProtectedRoute = ({ component: Component, user, getUser, ...rest }) => {
       render={(props) => {
         // Check if there is some user logged in already
         // Return the component associated to the url if successful or redirect if not
+        console.log("CHECK ROUTE: ", user)
         if (user) {
           return <Component {...props} getUser={getUser} loggedInUser={user} />;
         } else {
