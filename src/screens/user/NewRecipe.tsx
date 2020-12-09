@@ -133,8 +133,8 @@ const NewRecipe = () => {
                   <Form.Item
                     {...field}
                     label="Quantity"
-                    name={[field.name, "Quantity"]}
-                    fieldKey={[field.fieldKey, "Quantity"]}
+                    name={[field.name, "quantity"]}
+                    fieldKey={[field.fieldKey, "quantity"]}
                     rules={[{ required: true, message: "Missing Quantity" }]}
                   >
                     <Input />
@@ -143,8 +143,8 @@ const NewRecipe = () => {
                   <Form.Item
                     {...field}
                     label="Unit"
-                    name={[field.name, "Unit"]}
-                    fieldKey={[field.fieldKey, "Unit"]}
+                    name={[field.name, "unit"]}
+                    fieldKey={[field.fieldKey, "unit"]}
                     initialValue="g"
                   >
                     <Select style={{ width: 120 }}>
@@ -185,8 +185,8 @@ const NewRecipe = () => {
                   <Form.Item
                     {...field}
                     label="Description"
-                    name={[field.name, "Description"]}
-                    fieldKey={[field.fieldKey, "Description"]}
+                    name={[field.name, "description"]}
+                    fieldKey={[field.fieldKey, "description"]}
                     rules={[{ required: true, message: "Missing description" }]}
                   >
                     <TextArea />

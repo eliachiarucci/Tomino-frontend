@@ -17,6 +17,12 @@ class RecipeService {
       .then(response => response.data)
   };
 
+  getRecipe = (recipeID) => {
+      return this.service
+        .get(`/recipe/${recipeID}`)
+        .then(response => response.data)
+  }
+
   getRecipes = () => {
       return this.service
         .get("/recipes")

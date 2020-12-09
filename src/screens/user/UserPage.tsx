@@ -28,34 +28,23 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
     });
   }, []);
 
+  const openRecipe = () => {};
+
   useEffect(() => {
     console.log(recipes);
+    console.log(window.performance);
   }, [recipes]);
 
   return (
     <>
-      <div>
-        <Link to="/">
-          <Button type="primary" onClick={logout}>
-            Logout
-          </Button>
-        </Link>
-      </div>
       {recipes.map((recipe: any) => (
         <Card
+          key={recipe._id}
           style={{ width: 300 }}
           cover={<img alt="example" src={recipe.image} />}
-          actions={[
-            <SettingOutlined key="setting" />,
-            <EditOutlined key="edit" />,
-            <EllipsisOutlined key="ellipsis" />,
-          ]}
+          actions={[<Link to={`/recipe/${recipe._id}`}>OPEN</Link>]}
         >
-          <Meta
-            avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-            title={recipe.title}
-            description={recipe.description}
-          />
+          <Meta avatar={<Avatar src={recipe.author.image} />} title={recipe.title} description={recipe.description} />
         </Card>
       ))}
     </>
