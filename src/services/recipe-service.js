@@ -23,10 +23,29 @@ class RecipeService {
         .then(response => response.data)
   }
 
+  getMyRecipes = () => {
+      return this.service
+        .get(`/myrecipes`)
+        .then(response => response.data)
+  }
+
   getRecipes = () => {
       return this.service
         .get("/recipes")
         .then(response => response.data)
+  }
+
+  deleteRecipe = (recipeID) => {
+    console.log(recipeID)
+    return this.service
+      .post("/recipe/delete", {recipeID})
+      .then(response => response.data)
+  }
+
+  modifyRecipe = (values) => {
+    return this.service
+    .post(`/recipe/modify`, values)
+    .then(response => response.data)
   }
 
 }

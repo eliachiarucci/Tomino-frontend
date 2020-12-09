@@ -5,7 +5,7 @@ import { MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, UploadOutlin
 import moment from "moment";
 import env from "../../env";
 import recipeService from "../../services/recipe-service";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 const RecipeService = new recipeService();
 const { TextArea } = Input;
 const { Option } = Select;
@@ -15,6 +15,26 @@ const NewRecipe = () => {
   const [formValue, setFormValue] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const history = useHistory();
+  const { recipeID } = useParams<any>();
+
+  useEffect(() => {
+    RecipeService.getRecipe(recipeID)
+      .then((response: any) => parseResponseAndSetForm(response))
+      .catch((err) => console.log(err.message));
+  }, []);
+
+  const parseResponseAndSetForm = (values: any) => {
+    console.log(values);
+    values.steps.forEach((step: any) => {
+      if (!step.timer) {
+        step.time = 0;
+        step.timer = false;
+      } else step.time = moment(step.time * 1000).utcOffset(0);
+    });
+    values.preparationtime = moment(values.preparationtime * 1000).utcOffset(0);
+    console.log(values);
+    form.setFieldsValue(values);
+  };
 
   const onFinish = (values: any) => {
     setLoading(true);
@@ -26,18 +46,24 @@ const NewRecipe = () => {
         } else step.time = moment.duration(step.time.format("HH:mm:ss")).asSeconds();
       });
       values.preparationtime = moment.duration(values.preparationtime.format("HH:mm:ss")).asSeconds();
-      values.image = values.image[0].response.cloudinaryUrl;
+      try {
+        values.image = values.image[0].response.cloudinaryUrl;
+      } catch (e) {
+        console.log(e);
+      }
     } catch (e) {
       setLoading(false);
+      console.log(e);
       message.error("Something went wrong with the compilation of the forms, please fill all the required inputs");
       return;
     }
+    values.recipeID = recipeID;
     console.log("Received values of form:", values);
-    RecipeService.addRecipe(values)
+    RecipeService.modifyRecipe(values)
       .then((response) => history.push("/home"))
       .catch((err) => {
-        console.log(err.response.data.message);
-        message.error(err.response.data.message);
+        console.log(err.response);
+        message.error(err.response);
         setLoading(false);
       });
   };
@@ -54,6 +80,7 @@ const NewRecipe = () => {
   };
 
   const uploadUrl = () => {
+    form.setFieldsValue({ image: [] });
     return env.SERVER_URL + "/upload";
   };
 
@@ -67,7 +94,6 @@ const NewRecipe = () => {
 
   useEffect(() => {
     console.log(formValue);
-    console.log(form);
   }, [formValue]);
 
   const isTimerSet = (index: number) => {
@@ -85,7 +111,7 @@ const NewRecipe = () => {
         <Form.Item name="title" label="Title" rules={[{ required: true, message: "Please add a title" }]}>
           <Input type="text" placeholder="title" name="title" />
         </Form.Item>
-
+        <img src={form.getFieldValue("image")}></img>
         <Form.Item
           name="image"
           label="Image"
@@ -94,7 +120,7 @@ const NewRecipe = () => {
           rules={[{ required: true, message: "Please upload a profile picture!" }]}
         >
           <Upload accept=".jpg, .jpeg, .png" multiple={false} name="image" action={uploadUrl} listType="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
+            <Button icon={<UploadOutlined />}>Click to replace image</Button>
           </Upload>
         </Form.Item>
 

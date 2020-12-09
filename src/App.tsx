@@ -11,6 +11,8 @@ import Signup from "./screens/auth/Signup";
 import NewRecipe from "./screens/user/NewRecipe";
 import { Spin } from "antd";
 import Recipe from "./screens/user/Recipe";
+import Profile from "./screens/user/Profile";
+import ModifyRecipe from "./screens/user/ModifyRecipe";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<any>(null);
@@ -60,6 +62,14 @@ function App() {
               path="/recipe/:recipeID"
               component={Recipe}
             />
+            <ProtectedRoute
+              user={loggedInUser}
+              getUser={getLoggedInUser}
+              exact
+              path="/recipe/modify/:recipeID"
+              component={ModifyRecipe}
+            />
+            <ProtectedRoute user={loggedInUser} getUser={getLoggedInUser} exact path="/profile" component={Profile} />
             <Route path="/" exact component={HomePage} />
             <Route
               path="/login"
