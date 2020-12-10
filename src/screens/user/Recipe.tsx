@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import recipeService from "../../services/recipe-service";
-import { Button, Steps, Typography } from "antd";
+import { Card, Button, Steps, Typography } from "antd";
 import Timer from "../../components/Timer/Timer";
+import * as tf from "@tensorflow/tfjs";
+import * as speechCommands from "@tensorflow-models/speech-commands";
 const { Title, Text } = Typography;
 
 const Recipe = () => {
@@ -13,6 +15,49 @@ const Recipe = () => {
   const [finished, setFinished] = useState<boolean>(false);
   const RecipeService = new recipeService();
   const [timers, setTimers] = useState<any>([]);
+  let baseRecognizer, transferRecognizer: any;
+  useEffect(() => {
+    const startTS = async () => {
+      let modelBlob = await fetch(
+        "https://res.cloudinary.com/eliaironhack/raw/upload/v1607559439/mrpan/i377ooohutartrl5iybt"
+      ).then((r) => r.blob());
+      let modelFile = blobToFile(modelBlob, "model.json");
+      let weightsBlob = await fetch(
+        "https://res.cloudinary.com/eliaironhack/raw/upload/v1607559442/mrpan/fmu4p0n1myscflieolbu"
+      ).then((r) => r.blob());
+      let weightsFile = blobToFile(weightsBlob, "model.weights.bin");
+
+      baseRecognizer = await speechCommands.create("BROWSER_FFT");
+      await baseRecognizer.ensureModelLoaded();
+      transferRecognizer = await baseRecognizer.createTransfer("colors");
+      await transferRecognizer.load(tf.io.browserFiles([modelFile, weightsFile]));
+      console.log(transferRecognizer);
+      transferRecognizer.word = ["b", "f"];
+      await transferRecognizer.listen(
+        (result: any) => {
+          console.log("starting to listen", result.scores);
+          // - result.scores contains the scores for the new vocabulary, which
+          //   can be checked with:
+          const words = transferRecognizer.wordLabels();
+          // `result.scores` contains the scores for the new words, not the original
+          // words.
+          for (let i = 0; i < words; ++i) {
+            console.log(`score for word '${words[i]}' = ${result.scores[i]}`);
+          }
+        },
+        { probabilityThreshold: 0.998 }
+      );
+    };
+
+    startTS();
+  }, []);
+
+  function blobToFile(theBlob: any, fileName: string) {
+    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    return theBlob;
+  }
 
   const handleTick = (time: number, name: string | number) => {
     console.log(name);
@@ -93,27 +138,35 @@ const Recipe = () => {
         </div>
       ) : (
         <>
-          <Title>{recipe.steps[currentStep].name}</Title>
-          <Text>{recipe.steps[currentStep].description}</Text>
-          <Button onClick={previous}>-</Button>
-          <Button onClick={next}>+</Button>
-          {recipe.steps[currentStep].timer ? <Button onClick={timer}>Start the timer</Button> : null}
+          {!finished ? (
+            <>
+              <Title>{recipe.steps[currentStep].name}</Title>
+              <Text>{recipe.steps[currentStep].description}</Text>
+              <Button onClick={previous}>-</Button>
+              <Button onClick={next}>+</Button>
+              {recipe.steps[currentStep].timer ? <Button onClick={timer}>Start the timer</Button> : null}
+            </>
+          ) : (
+            <div>CONGRATULATIONS!</div>
+          )}
         </>
       )}
-      {timers.map((timer: any, i: number) => (
-        <div key={i}>
-          <Timer
-            time={timer.time}
-            tickRate={1000}
-            onTick={handleTick}
-            onFinish={handleFinish}
-            running={timer.running}
-            name={timer.name}
-          ></Timer>
-          <Button onClick={() => stopTimer(timer.name)}>Stop Timer</Button>
-          <Button onClick={() => startTimer(timer.name)}>Start Timer</Button>
-        </div>
-      ))}
+      <Card className="timer-card">
+        {timers.map((timer: any, i: number) => (
+          <div key={i}>
+            <Timer
+              time={timer.time}
+              tickRate={1000}
+              onTick={handleTick}
+              onFinish={handleFinish}
+              running={timer.running}
+              name={timer.name}
+            ></Timer>
+            <Button onClick={() => stopTimer(timer.name)}>Stop Timer</Button>
+            <Button onClick={() => startTimer(timer.name)}>Start Timer</Button>
+          </div>
+        ))}
+      </Card>
     </>
   ) : (
     <div>loading</div>

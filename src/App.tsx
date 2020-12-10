@@ -13,6 +13,7 @@ import { Spin } from "antd";
 import Recipe from "./screens/user/Recipe";
 import Profile from "./screens/user/Profile";
 import ModifyRecipe from "./screens/user/ModifyRecipe";
+import TensorFlow from "./screens/user/TensorFlow.js";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<any>(null);
@@ -68,6 +69,13 @@ function App() {
               exact
               path="/recipe/modify/:recipeID"
               component={ModifyRecipe}
+            />
+            <ProtectedRoute
+              user={loggedInUser}
+              getUser={getLoggedInUser}
+              exact
+              path="/setHotword"
+              component={TensorFlow}
             />
             <ProtectedRoute user={loggedInUser} getUser={getLoggedInUser} exact path="/profile" component={Profile} />
             <Route path="/" exact component={HomePage} />

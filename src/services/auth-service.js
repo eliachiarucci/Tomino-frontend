@@ -30,6 +30,7 @@ class AuthService {
     return this.service.get("/loggedin").then((response) => response.data);
   };
 
+
   // Method to use for logging our user out
   logout = () => {
     return this.service.post("/logout", {}).then((response) => response.data);
