@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import recipeService from "../../services/recipe-service";
-import { Button, Steps, Typography } from "antd";
+import { Card, Button, Steps, Typography } from "antd";
 import Timer from "../../components/Timer/Timer";
 const { Title, Text } = Typography;
 
@@ -13,6 +13,13 @@ const Recipe = () => {
   const [finished, setFinished] = useState<boolean>(false);
   const RecipeService = new recipeService();
   const [timers, setTimers] = useState<any>([]);
+
+  function blobToFile(theBlob: any, fileName: string) {
+    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    return theBlob;
+  }
 
   const handleTick = (time: number, name: string | number) => {
     console.log(name);
@@ -93,27 +100,35 @@ const Recipe = () => {
         </div>
       ) : (
         <>
-          <Title>{recipe.steps[currentStep].name}</Title>
-          <Text>{recipe.steps[currentStep].description}</Text>
-          <Button onClick={previous}>-</Button>
-          <Button onClick={next}>+</Button>
-          {recipe.steps[currentStep].timer ? <Button onClick={timer}>Start the timer</Button> : null}
+          {!finished ? (
+            <>
+              <Title>{recipe.steps[currentStep].name}</Title>
+              <Text>{recipe.steps[currentStep].description}</Text>
+              <Button onClick={previous}>-</Button>
+              <Button onClick={next}>+</Button>
+              {recipe.steps[currentStep].timer ? <Button onClick={timer}>Start the timer</Button> : null}
+            </>
+          ) : (
+            <div>CONGRATULATIONS!</div>
+          )}
         </>
       )}
-      {timers.map((timer: any, i: number) => (
-        <div key={i}>
-          <Timer
-            time={timer.time}
-            tickRate={1000}
-            onTick={handleTick}
-            onFinish={handleFinish}
-            running={timer.running}
-            name={timer.name}
-          ></Timer>
-          <Button onClick={() => stopTimer(timer.name)}>Stop Timer</Button>
-          <Button onClick={() => startTimer(timer.name)}>Start Timer</Button>
-        </div>
-      ))}
+      <Card className="timer-card">
+        {timers.map((timer: any, i: number) => (
+          <div key={i}>
+            <Timer
+              time={timer.time}
+              tickRate={1000}
+              onTick={handleTick}
+              onFinish={handleFinish}
+              running={timer.running}
+              name={timer.name}
+            ></Timer>
+            <Button onClick={() => stopTimer(timer.name)}>Stop Timer</Button>
+            <Button onClick={() => startTimer(timer.name)}>Start Timer</Button>
+          </div>
+        ))}
+      </Card>
     </>
   ) : (
     <div>loading</div>

@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from "react";
 import FlexContainer from "flexcontainer-react";
-import { Form, Input, Button, Space, Select, Switch, TimePicker, Tooltip, Upload, message } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Space,
+  Select,
+  Switch,
+  TimePicker,
+  Tooltip,
+  Upload,
+  message,
+  Rate,
+  InputNumber,
+} from "antd";
 import { MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import env from "../../env";
@@ -78,6 +91,20 @@ const NewRecipe = () => {
     }
   };
 
+  const categoriesArray = [
+    "Dessert",
+    "Meat",
+    "Pasta",
+    "Pizza",
+    "Vegetarian",
+    "Vegan",
+    "Appetizer",
+    "Fish",
+    "Bread",
+    "Gluten-free",
+    "Other",
+  ];
+
   return (
     <FlexContainer type="vertical" alignItems="center" width="100vw" justifyContent="center">
       <h2>Add Recipe</h2>
@@ -85,7 +112,6 @@ const NewRecipe = () => {
         <Form.Item name="title" label="Title" rules={[{ required: true, message: "Please add a title" }]}>
           <Input type="text" placeholder="title" name="title" />
         </Form.Item>
-
         <Form.Item
           name="image"
           label="Image"
@@ -97,13 +123,28 @@ const NewRecipe = () => {
             <Button icon={<UploadOutlined />}>Click to upload</Button>
           </Upload>
         </Form.Item>
-
         <Form.Item
           name="description"
           label="Description"
           rules={[{ required: true, message: "Please add a description" }]}
         >
           <TextArea rows={4} placeholder="description" name="description" />
+        </Form.Item>
+
+        <Form.Item name="category" label="Category" rules={[{ required: true, message: "Please add a category" }]}>
+          <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder="Select a person"
+            optionFilterProp="children"
+            //filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          >
+            {categoriesArray.map((category) => (
+              <Option key={category} value={category}>
+                {category}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item
@@ -113,7 +154,6 @@ const NewRecipe = () => {
         >
           <TimePicker defaultValue={moment("00:00:00", "HH:mm:ss")} />
         </Form.Item>
-
         <h4>Ingredients</h4>
         <Form.List name="ingredients">
           {(fields, { add, remove }) => (
@@ -151,6 +191,8 @@ const NewRecipe = () => {
                     <Select style={{ width: 120 }}>
                       <Option value="g">g</Option>
                       <Option value="kg">kg</Option>
+                      <Option value="ml">ml</Option>
+                      <Option value="l">l</Option>
                       <Option value="pieces">pieces</Option>
                     </Select>
                   </Form.Item>
@@ -165,7 +207,6 @@ const NewRecipe = () => {
             </div>
           )}
         </Form.List>
-
         <h4>Steps</h4>
         <Form.List name="steps">
           {(fields, { add, remove }) => (
@@ -216,7 +257,6 @@ const NewRecipe = () => {
             </div>
           )}
         </Form.List>
-
         <h4>Conservation time</h4>
         <Form.List name="conservationtimes">
           {(fields, { add, remove }) => (
@@ -231,7 +271,7 @@ const NewRecipe = () => {
                     fieldKey={[field.fieldKey, "conservationtime"]}
                     rules={[{ required: true, message: "Missing conservation time" }]}
                   >
-                    <Input type="number" style={{ width: 130 }}></Input>
+                    <InputNumber type="number" min={0} max={60} />
                   </Form.Item>
 
                   <Form.Item
@@ -258,11 +298,19 @@ const NewRecipe = () => {
             </div>
           )}
         </Form.List>
-
+        <Form.Item
+          label="Difficulty"
+          name="difficulty"
+          rules={[{ required: true, message: "Please add a difficulty rating" }]}
+        >
+          <Rate />
+        </Form.Item>
+        <Form.Item label="Calories (per serving)" name="calories">
+          <InputNumber type="number" min={0} max={2000} />
+        </Form.Item>
         <Form.Item label="Tags" name="tags">
           <Select mode="tags" style={{ width: "100%" }} placeholder="Tags Mode"></Select>
         </Form.Item>
-
         <Form.Item>
           <Button loading={loading} type="primary" htmlType="submit" className="form-button">
             Create Recipe
