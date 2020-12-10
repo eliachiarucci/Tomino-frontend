@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 import "./NavBar.css";
 import FlexContainer from 'flexcontainer-react';
 import AuthService from "../../services/auth-service";
-
+import Logo from '../../TominoLogo.png';
+const {Title, Text} = Typography;
 const Navbar = (props) => {
   const [loggedInUser, setLoggedInUser] = useState(null);
 
@@ -29,7 +30,7 @@ const Navbar = (props) => {
       <nav class="navbar">
         <FlexContainer type="horizontal" justifyContent="space-between" height="100%" alignItems="center" padding="0px 30px">
           <FlexContainer height="100%" alignItems="center">
-            <h2>Tomino</h2>
+            <img className="logo" src={Logo}></img>
           </FlexContainer>
             {loggedInUser ? (
               <FlexContainer type="horizontal" height="100%" alignItems="center" gap={20}>

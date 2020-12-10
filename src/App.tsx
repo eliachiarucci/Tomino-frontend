@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.less";
 import { Switch, Route, BrowserRouter as Router, Redirect } from "react-router-dom";
 import HomePage from "./screens/HomePage";
@@ -16,9 +16,7 @@ import ModifyRecipe from "./screens/user/ModifyRecipe";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<any>(null);
-
   const service = new AuthService();
-
   // Function to help fetch a logged in user
   const fetchUser = () => {
     if (loggedInUser === null) {
@@ -37,7 +35,6 @@ function App() {
   const getLoggedInUser = (userObject: object) => {
     setLoggedInUser(userObject);
   };
-
   // Run to check if user is authenticated
   fetchUser();
 

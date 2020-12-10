@@ -1,5 +1,10 @@
 .navbar {
-  height: 70px;
-  background-color: #00bb77;
+  height: 90px;
+  background-color: #f56322;
   position: sticky;
+}
+
+.logo {
+  height: 100%;
+  padding: 10px;
 }
