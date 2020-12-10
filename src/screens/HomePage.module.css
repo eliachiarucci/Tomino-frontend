@@ -2,6 +2,7 @@
   background-color: antiquewhite;
   min-height: 100%;
   margin-bottom: 400px;
+  position: relative;
 }
 
 .rounded {
@@ -14,7 +15,7 @@
 .stepWrapper {
   display: flex;
   justify-content: center;
-  height: 450px;
+  height: 550px;
 }
 .roundedImage {
   width: 200px;
@@ -46,6 +47,7 @@
 .footer {
   left: 0;
   bottom: 0;
+  position: absolute;
   background-size: cover;
   background-repeat: no-repeat;
   width: 100%;

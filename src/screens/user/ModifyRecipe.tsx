@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from "react";
 import FlexContainer from "flexcontainer-react";
-import {
-  Form,
-  Input,
-  Button,
-  Space,
-  Select,
-  Switch,
-  TimePicker,
-  Tooltip,
-  Upload,
-  message,
-  Rate,
-  InputNumber,
-} from "antd";
+import { Form, Input, Button, Space, Select, Switch, TimePicker, Tooltip, Upload, message, Rate, InputNumber } from "antd";
 import { MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import env from "../../env";
@@ -33,7 +20,7 @@ const NewRecipe = () => {
   useEffect(() => {
     RecipeService.getRecipe(recipeID)
       .then((response: any) => parseResponseAndSetForm(response))
-      .catch((err) => console.log(err.message));
+      .catch(err => console.log(err.message));
   }, []);
 
   const parseResponseAndSetForm = (values: any) => {
@@ -73,8 +60,8 @@ const NewRecipe = () => {
     values.recipeID = recipeID;
     console.log("Received values of form:", values);
     RecipeService.modifyRecipe(values)
-      .then((response) => history.push("/home"))
-      .catch((err) => {
+      .then(response => history.push("/home"))
+      .catch(err => {
         console.log(err.response);
         message.error(err.response);
         setLoading(false);
@@ -128,7 +115,7 @@ const NewRecipe = () => {
     "Fish",
     "Bread",
     "Gluten-free",
-    "Other",
+    "Other"
   ];
 
   return (
@@ -138,7 +125,7 @@ const NewRecipe = () => {
         <Form.Item name="title" label="Title" rules={[{ required: true, message: "Please add a title" }]}>
           <Input type="text" placeholder="title" name="title" />
         </Form.Item>
-        <img src={form.getFieldValue("image")}></img>
+        <img src={form.getFieldValue("image")} />
         <Form.Item
           name="image"
           label="Image"
@@ -151,11 +138,7 @@ const NewRecipe = () => {
           </Upload>
         </Form.Item>
 
-        <Form.Item
-          name="description"
-          label="Description"
-          rules={[{ required: true, message: "Please add a description" }]}
-        >
+        <Form.Item name="description" label="Description" rules={[{ required: true, message: "Please add a description" }]}>
           <TextArea rows={4} placeholder="description" name="description" />
         </Form.Item>
 
@@ -163,11 +146,11 @@ const NewRecipe = () => {
           <Select
             showSearch
             style={{ width: 200 }}
-            placeholder="Select a person"
+            placeholder="Select a category"
             optionFilterProp="children"
             //filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
-            {categoriesArray.map((category) => (
+            {categoriesArray.map(category => (
               <Option key={category} value={category}>
                 {category}
               </Option>
@@ -175,11 +158,7 @@ const NewRecipe = () => {
           </Select>
         </Form.Item>
 
-        <Form.Item
-          name="preparationtime"
-          label="Preparation Time"
-          rules={[{ required: true, message: "Please add a preparation time" }]}
-        >
+        <Form.Item name="preparationtime" label="Preparation Time" rules={[{ required: true, message: "Please add a preparation time" }]}>
           <TimePicker defaultValue={moment("00:00:00", "HH:mm:ss")} />
         </Form.Item>
 
@@ -187,7 +166,7 @@ const NewRecipe = () => {
         <Form.List name="ingredients">
           {(fields, { add, remove }) => (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {fields.map((field) => (
+              {fields.map(field => (
                 <Space key={field.key} align="baseline">
                   <MinusCircleOutlined onClick={() => remove(field.name)} />
                   <Form.Item
@@ -197,7 +176,7 @@ const NewRecipe = () => {
                     fieldKey={[field.fieldKey, "name"]}
                     rules={[{ required: true, message: "Missing name" }]}
                   >
-                    <Input style={{ width: 130 }}></Input>
+                    <Input style={{ width: 130 }} />
                   </Form.Item>
 
                   <Form.Item
@@ -210,13 +189,7 @@ const NewRecipe = () => {
                     <Input />
                   </Form.Item>
 
-                  <Form.Item
-                    {...field}
-                    label="Unit"
-                    name={[field.name, "unit"]}
-                    fieldKey={[field.fieldKey, "unit"]}
-                    initialValue="g"
-                  >
+                  <Form.Item {...field} label="Unit" name={[field.name, "unit"]} fieldKey={[field.fieldKey, "unit"]} initialValue="g">
                     <Select style={{ width: 120 }}>
                       <Option value="g">g</Option>
                       <Option value="kg">kg</Option>
@@ -241,7 +214,7 @@ const NewRecipe = () => {
         <Form.List name="steps">
           {(fields, { add, remove }) => (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {fields.map((field) => (
+              {fields.map(field => (
                 <Space key={field.key} align="baseline">
                   <MinusCircleOutlined onClick={() => remove(field.name)} />
                   <Form.Item
@@ -251,7 +224,7 @@ const NewRecipe = () => {
                     fieldKey={[field.fieldKey, "name"]}
                     rules={[{ required: true, message: "Missing name" }]}
                   >
-                    <Input style={{ width: 130 }}></Input>
+                    <Input style={{ width: 130 }} />
                   </Form.Item>
 
                   <Form.Item
@@ -292,7 +265,7 @@ const NewRecipe = () => {
         <Form.List name="conservationtimes">
           {(fields, { add, remove }) => (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {fields.map((field) => (
+              {fields.map(field => (
                 <Space key={field.key} align="baseline">
                   <MinusCircleOutlined onClick={() => remove(field.name)} />
                   <Form.Item
@@ -330,11 +303,7 @@ const NewRecipe = () => {
           )}
         </Form.List>
 
-        <Form.Item
-          label="Difficulty"
-          name="difficulty"
-          rules={[{ required: true, message: "Please add a difficulty rating" }]}
-        >
+        <Form.Item label="Difficulty" name="difficulty" rules={[{ required: true, message: "Please add a difficulty rating" }]}>
           <Rate />
         </Form.Item>
 
@@ -343,7 +312,7 @@ const NewRecipe = () => {
         </Form.Item>
 
         <Form.Item label="Tags" name="tags">
-          <Select mode="tags" style={{ width: "100%" }} placeholder="Tags Mode"></Select>
+          <Select mode="tags" style={{ width: "100%" }} placeholder="Tags Mode" />
         </Form.Item>
 
         <Form.Item>

@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import recipeService from "../../services/recipe-service";
 import { Card, Button, Steps, Typography } from "antd";
 import Timer from "../../components/Timer/Timer";
+import Tomino from "../../components/Tomino/Tomino";
+
 const { Title, Text } = Typography;
 
 const Recipe = () => {
@@ -86,6 +88,7 @@ const Recipe = () => {
 
   return recipe ? (
     <>
+      <Tomino />
       {!started ? (
         <div>
           <Title>{recipe.title}</Title>

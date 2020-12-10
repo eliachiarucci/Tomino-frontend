@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button, Typography } from 'antd';
-import "./NavBar.css";
+import styles from "./NavBar.module.css";
 import FlexContainer from 'flexcontainer-react';
 import AuthService from "../../services/auth-service";
 import Logo from '../../TominoLogo.png';
@@ -26,16 +26,20 @@ const Navbar = (props) => {
     });
   };
 
+  console.log(styles);
+
     return (
-      <nav class="navbar">
+      <nav class={styles.navbar}>
         <FlexContainer type="horizontal" justifyContent="space-between" height="100%" alignItems="center" padding="0px 30px">
           <FlexContainer height="100%" alignItems="center">
-            <img className="logo" src={Logo}></img>
+            <img className={styles.logo} src={Logo}></img>
           </FlexContainer>
             {loggedInUser ? (
               <FlexContainer type="horizontal" height="100%" alignItems="center" gap={20}>
-                <h4>User: {props.userInSession.email || ""}</h4>
+                <img src={props.userInSession.image} className={styles.img}></img>
+                <Title className={styles.title} level={4}>{props.userInSession.username || ""}</Title>
                 <Link to="/home"><Button type="primary">Home</Button></Link>
+                <Link to="/profile"><Button type="primary">Profile</Button></Link>
                 <Button type="primary" onClick={logout}>Logout</Button>
               </FlexContainer>
             ) : 

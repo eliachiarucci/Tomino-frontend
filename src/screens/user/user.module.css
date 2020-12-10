@@ -1,0 +1,39 @@
+.card {
+  border-radius: 20px;
+  overflow: hidden;
+  width: 450px;
+  height: 620px;
+  box-shadow: 1px 1px 10px 3px rgba(100, 50, 0, 0.3);
+  border: 2px solid #f56322;
+}
+
+.miniCard {
+  border-radius: 20px;
+  overflow: hidden;
+  width: 380px;
+  height: 500px;
+  box-shadow: 1px 1px 10px 3px rgba(100, 50, 0, 0.3);
+  border: 2px solid #f56322;
+}
+
+.cardImage {
+  height: 250px;
+  object-fit: cover;
+}
+
+.action {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+.cardDescription {
+  height: 50px;
+}
+
+.sidebar {
+  padding-top: 20px;
+  min-width: 250px;
+  background-color: #fff;
+  box-shadow: 0px 2px 10px 2px rgba(100, 50, 0, 0.3);
+}

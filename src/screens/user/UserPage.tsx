@@ -2,10 +2,14 @@ import React, { useEffect, useState } from "react";
 import authService from "../../services/auth-service";
 import { Link } from "react-router-dom";
 import recipeService from "../../services/recipe-service";
-import { Input, InputNumber, Form, Button, Card, Avatar, Row, Col } from "antd";
+import { Select, Rate, Input, InputNumber, Form, Button, Card, Avatar, Row, Col, Image, Typography, Divider } from "antd";
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from "@ant-design/icons";
 import FlexContainer from "flexcontainer-react";
+import styles from "./user.module.css";
+import timeFormatter from "../../helpers/timeFormatter";
 
+const { Option } = Select;
+const { Title, Text } = Typography;
 const { Meta } = Card;
 
 interface props {
@@ -28,7 +32,7 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
     });
   }, []);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const filteredRecipes = recipes.filter((recipe: any) => {
       let toReturn = true;
       for (let key in filters) {
@@ -40,20 +44,21 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
             if (!recipe.author.contains(filters[key])) toReturn = false;
             break;
           case "conservationtime":
-            if (!recipe.conservationtime.contains(filters[key])) toReturn = false;
+            if (recipe.conservationtime < filters[key]) toReturn = false;
             break;
           case "calories":
-            if (!recipe.calories.contains(filters[key])) toReturn = false;
+            if (recipe.calories > filters[key]) toReturn = false;
             break;
         }
       }
       return toReturn;
     });
-  }, [filters]);
+  }, [filters]); */
 
   const onChange = (value: any, filters: any) => {
     const filterRecipes = recipes.filter((recipe: any) => {
       let toReturn = true;
+      console.log(filters);
       for (let key in filters) {
         switch (key) {
           case "name":
@@ -63,10 +68,16 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
             if (recipe.author.username.toLowerCase().search(filters[key].toLowerCase()) < 0) toReturn = false;
             break;
           case "conservationtime":
-            if (recipe.conservationtime < filters[key]) toReturn = false;
+            if (recipe.conservationtime < parseInt(filters[key])) toReturn = false;
             break;
           case "calories":
-            if (recipe.calories < filters[key]) toReturn = false;
+            if (recipe.calories > parseInt(filters[key])) toReturn = false;
+            break;
+          case "difficulty":
+            if (recipe.difficulty > parseInt(filters[key])) toReturn = false;
+            break;
+          case "category":
+            if (recipe.category !== filters[key] && filters[key] !== "All" && filters[key] !== undefined) toReturn = false;
             break;
         }
       }
@@ -75,44 +86,130 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
     setFilteredRecipes(filterRecipes);
   };
 
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 17 },
+  };
+
+  const filtersLayout = {
+    labelCol: { span: 12 },
+    wrapperCol: { span: 12 },
+  };
+
+  const returnFormattedTitle = (title: string) => {
+    if (title.length > 15) return title.substr(0, 15) + "...";
+    console.log(title);
+    return title;
+  };
+
+  const returnFormattedDescription = (description: string) => {
+    if (description.length > 65) return description.substr(0, 65) + "...";
+    return description;
+  };
+
+  const getRecipeIngredientsOptions = (ingredients: any) => {
+    console.log(ingredients);
+    let wordCount = 0;
+    const ingredientsArray: any = [];
+    ingredients.forEach((ingredient: any) => {
+      wordCount += ingredient.name.length;
+      if (wordCount < 30) ingredientsArray.push(ingredient.name);
+    });
+    return ingredientsArray;
+  };
+
+  const getPreparationTime = (time: number) => {
+    return new timeFormatter().getFullString(time);
+  };
+
+  const categoriesArray = [
+    "All",
+    "Dessert",
+    "Meat",
+    "Pasta",
+    "Pizza",
+    "Vegetarian",
+    "Vegan",
+    "Appetizer",
+    "Fish",
+    "Bread",
+    "Gluten-free",
+    "Other",
+  ];
+
   return (
     <FlexContainer type="horizontal" height="100%">
-      <FlexContainer className="sidebar" type="vertical" width="250px" height="100%">
-        <Form className="sidebar-form" name="nest-messages" onValuesChange={onChange}>
+      <FlexContainer
+        className={styles.sidebar}
+        alignItems="center"
+        type="vertical"
+        minWidth="250px"
+        width="250px"
+        height="100%"
+        padding={20}
+      >
+        <Title>Filters</Title>
+        <Form {...filtersLayout} className="sidebar-form" name="nest-messages" onValuesChange={onChange}>
           <Form.Item name={["name"]} initialValue="" label="Name">
             <Input />
           </Form.Item>
           <Form.Item name={["author"]} initialValue="" label="Author">
             <Input />
           </Form.Item>
-          <Form.Item name={["conservationtime"]} label="Conservation Time">
-            <InputNumber type="number" min={0} max={60} />
+          <Form.Item name={["conservationtime"]} label="Conservation">
+            <Input type="number" min={0} max={60} />
           </Form.Item>
           <Form.Item name={["calories"]} label="Max Calories">
-            <InputNumber type="number" min={0} max={2000} />
+            <Input type="number" min={0} max={2000} />
           </Form.Item>
           <Form.Item name={["difficulty"]} label="Difficulty">
-            <InputNumber type="number" min={0} max={5} />
+            <Input type="number" min={0} max={5} />
           </Form.Item>
-          <Form.Item name={["rating"]} label="Rating">
-            <InputNumber type="number" min={0} max={5} />
+          <Form.Item name={["category"]} label="Category">
+            <Select showSearch placeholder="Select a category" optionFilterProp="children" defaultValue={"All"}>
+              {categoriesArray.map((category) => (
+                <Option key={category} value={category}>
+                  {category}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
         </Form>
+        <Divider />
+        <Text>Found {filteredRecipes.length} recipes</Text>
       </FlexContainer>
-      <Row>
+      <Row gutter={[60, 60]}>
         {filteredRecipes.map((recipe: any) => (
-          <Col>
+          <Col key={recipe._id}>
             <Card
-              key={recipe._id}
-              style={{ width: 300 }}
-              cover={<img alt="example" src={recipe.image} />}
+              className={styles.card}
+              cover={<Image className={styles.cardImage} alt="example" src={recipe.image} />}
               actions={[<Link to={`/recipe/${recipe._id}`}>OPEN</Link>]}
             >
               <Meta
                 avatar={<Avatar src={recipe.author.image} />}
-                title={recipe.title}
-                description={recipe.description}
+                title={returnFormattedTitle(recipe.title)}
+                description={<div className={styles.cardDescription}>{returnFormattedDescription(recipe.description)}</div>}
               />
+              <Form {...layout}>
+                <Form.Item label="Ingredients">
+                  <Select
+                    defaultValue={getRecipeIngredientsOptions(recipe.ingredients)}
+                    mode="tags"
+                    style={{ width: "100%" }}
+                    placeholder="Ingredients"
+                    disabled
+                  ></Select>
+                </Form.Item>
+
+                <Form.Item label="Difficulty">
+                  <Rate value={recipe.difficulty} disabled />
+                </Form.Item>
+
+                <Form.Item label="Preparation Time">{getPreparationTime(recipe.preparationtime)}</Form.Item>
+
+                <Form.Item label="Category">{recipe.category}</Form.Item>
+              </Form>
             </Card>
           </Col>
         ))}
