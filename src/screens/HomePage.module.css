@@ -1,3 +1,57 @@
-body {
+.homepageContainer {
   background-color: antiquewhite;
+  min-height: 100%;
+  margin-bottom: 400px;
+}
+
+.rounded {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.stepWrapper {
+  display: flex;
+  justify-content: center;
+  height: 450px;
+}
+.roundedImage {
+  width: 200px;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.responsiveImage {
+  width: 100%;
+  height: 100%;
+}
+
+.homepageHero {
+  color: white !important;
+  margin: 0;
+}
+
+.white {
+  color: white !important;
+}
+
+.stepContainer {
+  width: 200px;
+}
+
+.footer {
+  left: 0;
+  bottom: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20px;
 }

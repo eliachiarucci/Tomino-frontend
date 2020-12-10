@@ -1,7 +1,9 @@
 .navbar {
   height: 90px;
   background-color: #f56322;
-  position: sticky;
+  position: absolute;
+  width: 100%;
+  top: 0;
 }
 
 .logo {
