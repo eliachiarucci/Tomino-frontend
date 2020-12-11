@@ -1,14 +1,31 @@
 import React, { useEffect, useState } from "react";
 import FlexContainer from "flexcontainer-react";
-import { Form, Input, Button, Space, Select, Switch, TimePicker, Tooltip, Upload, message, Rate, InputNumber } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Space,
+  Select,
+  Switch,
+  TimePicker,
+  Tooltip,
+  Upload,
+  message,
+  Rate,
+  InputNumber,
+  Divider,
+  Typography
+} from "antd";
 import { MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import env from "../../env";
 import recipeService from "../../services/recipe-service";
 import { useHistory } from "react-router-dom";
+import styles from "./user.module.css";
 const RecipeService = new recipeService();
 const { TextArea } = Input;
 const { Option } = Select;
+const { Title } = Typography;
 
 const NewRecipe = () => {
   const [form] = Form.useForm();
@@ -94,8 +111,15 @@ const NewRecipe = () => {
 
   return (
     <FlexContainer type="vertical" alignItems="center" width="100vw" justifyContent="center">
-      <h2>Add Recipe</h2>
-      <Form form={form} name="dynamic_form_nest_item" onFinish={onFinish} onValuesChange={onChange} autoComplete="off">
+      <Form
+        className={styles.recipeFormCard}
+        form={form}
+        name="dynamic_form_nest_item"
+        onFinish={onFinish}
+        onValuesChange={onChange}
+        autoComplete="off"
+      >
+        <Title>Add Recipe</Title>
         <Form.Item name="title" label="Title" rules={[{ required: true, message: "Please add a title" }]}>
           <Input type="text" placeholder="title" name="title" />
         </Form.Item>
@@ -106,7 +130,7 @@ const NewRecipe = () => {
           getValueFromEvent={normFile}
           rules={[{ required: true, message: "Please upload a profile picture!" }]}
         >
-          <Upload accept=".jpg, .jpeg, .png" multiple={false} name="image" action={uploadUrl} listType="picture">
+          <Upload accept=".jpg, .jpeg, .png" multiple={false} name="image" action={uploadUrl} listType="text">
             <Button icon={<UploadOutlined />}>Click to upload</Button>
           </Upload>
         </Form.Item>
@@ -133,6 +157,7 @@ const NewRecipe = () => {
         <Form.Item name="preparationtime" label="Preparation Time" rules={[{ required: true, message: "Please add a preparation time" }]}>
           <TimePicker defaultValue={moment("00:00:00", "HH:mm:ss")} />
         </Form.Item>
+        <Divider />
         <h4>Ingredients</h4>
         <Form.List name="ingredients">
           {(fields, { add, remove }) => (
@@ -180,6 +205,7 @@ const NewRecipe = () => {
             </div>
           )}
         </Form.List>
+        <Divider />
         <h4>Steps</h4>
         <Form.List name="steps">
           {(fields, { add, remove }) => (
@@ -230,6 +256,7 @@ const NewRecipe = () => {
             </div>
           )}
         </Form.List>
+        <Divider />
         <h4>Conservation time</h4>
         <Form.List name="conservationtimes">
           {(fields, { add, remove }) => (
@@ -271,6 +298,7 @@ const NewRecipe = () => {
             </div>
           )}
         </Form.List>
+        <Divider />
         <Form.Item label="Difficulty" name="difficulty" rules={[{ required: true, message: "Please add a difficulty rating" }]}>
           <Rate />
         </Form.Item>
@@ -281,7 +309,7 @@ const NewRecipe = () => {
           <Select mode="tags" style={{ width: "100%" }} placeholder="Tags Mode" />
         </Form.Item>
         <Form.Item>
-          <Button loading={loading} type="primary" htmlType="submit" className="form-button">
+          <Button className={"form-button" + " " + styles.formButtonWide} loading={loading} type="primary" htmlType="submit">
             Create Recipe
           </Button>
         </Form.Item>

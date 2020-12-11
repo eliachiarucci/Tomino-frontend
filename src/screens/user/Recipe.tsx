@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import recipeService from "../../services/recipe-service";
-import { Card, Avatar, Button, Steps, Typography, Tooltip } from "antd";
+import { Card, Avatar, Button, Steps, Typography, Tooltip, Rate, Divider } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import Timer from "../../components/Timer/Timer";
 import Tomino from "../../components/Tomino/Tomino";
@@ -9,6 +9,7 @@ import styles from "./user.module.css";
 import Clock from "../../images/clock.jpg";
 import FlexContainer from "flexcontainer-react";
 import useSound from "use-sound";
+import timeFormatter from "../../helpers/timeFormatter";
 const alarm = require("../../sounds/timerSound.mp3");
 const { Meta } = Card;
 const { Title, Text } = Typography;
@@ -63,8 +64,8 @@ const Recipe = () => {
 
   useEffect(() => {
     RecipeService.getRecipe(recipeID)
-      .then((data) => setRecipe(data))
-      .catch((err) => console.log(err));
+      .then(data => setRecipe(data))
+      .catch(err => console.log(err));
   }, []);
 
   const start = () => {
@@ -79,7 +80,7 @@ const Recipe = () => {
     if (!timers.some((timer: any) => timer.name === recipe.steps[currentStep].name)) {
       setTimers((oldTimers: any) => [
         ...oldTimers,
-        { name: recipe.steps[currentStep].name, time: recipe.steps[currentStep].time, running: true },
+        { name: recipe.steps[currentStep].name, time: recipe.steps[currentStep].time, running: true }
       ]);
     }
     console.log(timers);
@@ -92,6 +93,10 @@ const Recipe = () => {
   const handleFinish = () => {
     play();
     console.log("TIMER FINISHED!");
+  };
+
+  const getPreparationTime = (time: number) => {
+    return new timeFormatter().getFullString(time);
   };
 
   return recipe ? (
@@ -136,7 +141,7 @@ const Recipe = () => {
             <div className={styles.stepCard}>
               <Title>{recipe.steps[currentStep].name}</Title>
               <Text>{recipe.steps[currentStep].description}</Text>
-              <div>
+              <div className={styles.buttonsWrapper}>
                 <Button type="primary" onClick={previous}>
                   Previous
                 </Button>
@@ -147,12 +152,13 @@ const Recipe = () => {
               {recipe.steps[currentStep].timer ? (
                 <div>
                   <div>
+                    <br />
                     <Text>Timer:</Text>
                     <Tooltip title="There is a timer for this step, it will start when you proceed to the next section, or when you click the button">
                       <QuestionCircleOutlined />
                     </Tooltip>
                   </div>
-                  <Text>Duration: 203</Text>
+                  <Text>Duration: {getPreparationTime(recipe.steps[currentStep].time)} </Text>
                   <Button type="primary" onClick={timer}>
                     Start the timer
                   </Button>
@@ -162,6 +168,9 @@ const Recipe = () => {
           ) : (
             <FlexContainer className={styles.stepCard} type="vertical" alignItems="center" padding={40}>
               <Title>CONGRATULATIONS!</Title>
+              <Text>You completed this recipe, tell the author how good it is.</Text>
+              <Rate />
+              <Divider />
               <Link to="/home">
                 <Button type="primary">Go back home</Button>
               </Link>
@@ -177,7 +186,7 @@ const Recipe = () => {
               className={styles.timerCard}
               actions={[
                 <Button onClick={() => stopTimer(timer.name)}>Stop</Button>,
-                <Button onClick={() => startTimer(timer.name)}>Start</Button>,
+                <Button onClick={() => startTimer(timer.name)}>Start</Button>
               ]}
             >
               <Meta avatar={<Avatar src={Clock} />} title={timer.name} />
@@ -188,7 +197,7 @@ const Recipe = () => {
                 onFinish={handleFinish}
                 running={timer.running}
                 name={timer.name}
-              ></Timer>
+              />
             </Card>
           </div>
         ))}
