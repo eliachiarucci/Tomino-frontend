@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import recipeService from "../../services/recipe-service";
-import { Card, Button, Steps, Typography } from "antd";
+import { Card, Avatar, Button, Steps, Typography, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import Timer from "../../components/Timer/Timer";
 import Tomino from "../../components/Tomino/Tomino";
-
+import styles from "./user.module.css";
+import Clock from "../../images/clock.jpg";
+import FlexContainer from "flexcontainer-react";
+import useSound from "use-sound";
+const alarm = require("../../sounds/timerSound.mp3");
+const { Meta } = Card;
 const { Title, Text } = Typography;
 
 const Recipe = () => {
@@ -15,6 +21,7 @@ const Recipe = () => {
   const [finished, setFinished] = useState<boolean>(false);
   const RecipeService = new recipeService();
   const [timers, setTimers] = useState<any>([]);
+  const [play] = useSound(alarm);
 
   function blobToFile(theBlob: any, fileName: string) {
     //A Blob() is almost a File() - it's just missing the two properties below which we will add
@@ -83,56 +90,110 @@ const Recipe = () => {
   };
 
   const handleFinish = () => {
+    play();
     console.log("TIMER FINISHED!");
   };
 
   return recipe ? (
-    <>
+    <FlexContainer type="horizontal" justifyContent="center" alignItems="center" height="100%" width="100%">
       <Tomino />
       {!started ? (
-        <div>
+        <FlexContainer className={styles.fullRecipeCard} type="vertical" alignItems="flex-start" gap={20} padding={50} width="800px">
           <Title>{recipe.title}</Title>
-          {recipe.ingredients.map((ingredient: any, i: number) => (
-            <div key={i}>
-              {ingredient.name}
-              {ingredient.quantity}
-              {ingredient.unit}
-            </div>
-          ))}
-          <Button onClick={start}>Start the recipe</Button>
-        </div>
+          <Title level={3}>{recipe.description}</Title>
+          <Title level={3}>Calories: {recipe.calories}</Title>
+          <div>
+            <Title level={3}>Conservation Times:</Title>
+            {recipe.conservationtimes.map((conservation: any, i: number) => (
+              <div key={i}>
+                -{conservation.conservationtime} {conservation.storagelocation}
+              </div>
+            ))}
+          </div>
+          <div>
+            <Title level={3}>Ingredients:</Title>
+            {recipe.ingredients.map((ingredient: any, i: number) => (
+              <div key={i}>
+                -<strong>{ingredient.name}</strong> {ingredient.quantity} {ingredient.unit}
+              </div>
+            ))}
+          </div>
+          <div>
+            <Title level={3}>Steps:</Title>
+            {recipe.steps.map((step: any, i: number) => (
+              <div key={i}>
+                -<strong>{step.name}</strong>
+              </div>
+            ))}
+          </div>
+          <Button type="primary" onClick={start}>
+            Start the recipe
+          </Button>
+        </FlexContainer>
       ) : (
         <>
           {!finished ? (
-            <>
+            <div className={styles.stepCard}>
               <Title>{recipe.steps[currentStep].name}</Title>
               <Text>{recipe.steps[currentStep].description}</Text>
-              <Button onClick={previous}>-</Button>
-              <Button onClick={next}>+</Button>
-              {recipe.steps[currentStep].timer ? <Button onClick={timer}>Start the timer</Button> : null}
-            </>
+              <div>
+                <Button type="primary" onClick={previous}>
+                  Previous
+                </Button>
+                <Button type="primary" onClick={next}>
+                  Next
+                </Button>
+              </div>
+              {recipe.steps[currentStep].timer ? (
+                <div>
+                  <div>
+                    <Text>Timer:</Text>
+                    <Tooltip title="There is a timer for this step, it will start when you proceed to the next section, or when you click the button">
+                      <QuestionCircleOutlined />
+                    </Tooltip>
+                  </div>
+                  <Text>Duration: 203</Text>
+                  <Button type="primary" onClick={timer}>
+                    Start the timer
+                  </Button>
+                </div>
+              ) : null}
+            </div>
           ) : (
-            <div>CONGRATULATIONS!</div>
+            <FlexContainer className={styles.stepCard} type="vertical" alignItems="center" padding={40}>
+              <Title>CONGRATULATIONS!</Title>
+              <Link to="/home">
+                <Button type="primary">Go back home</Button>
+              </Link>
+            </FlexContainer>
           )}
         </>
       )}
-      <Card className="timer-card">
+
+      <FlexContainer type="vertical" className={styles.timerCardWrapper} gap={30}>
         {timers.map((timer: any, i: number) => (
           <div key={i}>
-            <Timer
-              time={timer.time}
-              tickRate={1000}
-              onTick={handleTick}
-              onFinish={handleFinish}
-              running={timer.running}
-              name={timer.name}
-            ></Timer>
-            <Button onClick={() => stopTimer(timer.name)}>Stop Timer</Button>
-            <Button onClick={() => startTimer(timer.name)}>Start Timer</Button>
+            <Card
+              className={styles.timerCard}
+              actions={[
+                <Button onClick={() => stopTimer(timer.name)}>Stop</Button>,
+                <Button onClick={() => startTimer(timer.name)}>Start</Button>,
+              ]}
+            >
+              <Meta avatar={<Avatar src={Clock} />} title={timer.name} />
+              <Timer
+                time={timer.time}
+                tickRate={1000}
+                onTick={handleTick}
+                onFinish={handleFinish}
+                running={timer.running}
+                name={timer.name}
+              ></Timer>
+            </Card>
           </div>
         ))}
-      </Card>
-    </>
+      </FlexContainer>
+    </FlexContainer>
   ) : (
     <div>loading</div>
   );

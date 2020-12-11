@@ -37,3 +37,48 @@
   background-color: #fff;
   box-shadow: 0px 2px 10px 2px rgba(100, 50, 0, 0.3);
 }
+
+.plusButton {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 30px;
+  height: 50px;
+  width: 50px;
+  font-size: 23px;
+}
+
+.row {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.timerCardWrapper {
+  position: fixed;
+  right: 50px;
+  top: 120px;
+}
+
+.timerCard {
+  width: 250px;
+  height: 140px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 1px 1px 13px 2px rgba(100, 50, 0, 0.3);
+}
+
+.fullRecipeCard {
+  text-align: left;
+  background-color: white;
+  border: 2px solid f56322;
+  box-shadow: 1px 1px 13px 2px rgba(100, 50, 0, 0.3);
+  border-radius: 20px;
+}
+
+.stepCard {
+  text-align: left;
+  background-color: white;
+  border: 2px solid f56322;
+  box-shadow: 1px 1px 13px 2px rgba(100, 50, 0, 0.3);
+  border-radius: 20px;
+}

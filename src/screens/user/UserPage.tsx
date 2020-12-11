@@ -139,6 +139,11 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
 
   return (
     <FlexContainer type="horizontal" height="100%">
+      <Link to="newrecipe">
+        <Button type="primary" className={styles.plusButton}>
+          +
+        </Button>
+      </Link>
       <FlexContainer
         className={styles.sidebar}
         alignItems="center"
@@ -178,7 +183,7 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
         <Divider />
         <Text>Found {filteredRecipes.length} recipes</Text>
       </FlexContainer>
-      <Row gutter={[60, 60]}>
+      <Row gutter={[60, 60]} className={styles.row}>
         {filteredRecipes.map((recipe: any) => (
           <Col key={recipe._id}>
             <Card

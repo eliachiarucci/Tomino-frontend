@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import timeFormatter from "../../helpers/timeFormatter";
 
 interface props {
   time: number;
@@ -18,12 +19,16 @@ const Timer = ({ time, tickRate = 1000, running = true, onTick, onFinish, name }
     setIntervalState(
       setInterval(() => {
         if (running) {
-          setTimer((oldTimer) => oldTimer - 1);
+          setTimer(oldTimer => oldTimer - 1);
         }
       }, tickRate)
     );
     console.log(running);
   }, [running]);
+
+  const parseTime = (time: number) => {
+    return new timeFormatter().getFullString(time);
+  };
 
   useEffect(() => {
     if (timer < 1) {
@@ -34,7 +39,7 @@ const Timer = ({ time, tickRate = 1000, running = true, onTick, onFinish, name }
     if (onTick) onTick(timer, name);
   }, [timer]);
 
-  return <div>{timer}</div>;
+  return <div>{parseTime(timer)}</div>;
 };
 
 export default Timer;
