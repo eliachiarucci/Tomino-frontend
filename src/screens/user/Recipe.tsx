@@ -24,24 +24,6 @@ const Recipe = () => {
   const [timers, setTimers] = useState<any>([]);
   const [play] = useSound(alarm);
 
-  function blobToFile(theBlob: any, fileName: string) {
-    //A Blob() is almost a File() - it's just missing the two properties below which we will add
-    theBlob.lastModifiedDate = new Date();
-    theBlob.name = fileName;
-    return theBlob;
-  }
-
-  const handleTick = (time: number, name: string | number) => {
-    console.log(name);
-    /*     const timersCopy = [...timers];
-    for (let i = 0; i < timersCopy.length; i++) {
-      if (timersCopy[i].name === name) timersCopy[i].time = timersCopy[i].time - 1;
-    }
-    setTimers((oldTimers: any) => timersCopy); */
-    console.log(timers);
-    console.log("LOG");
-  };
-
   const stopTimer = (name: string) => {
     const timersCopy = [...timers];
     console.log(timersCopy);
@@ -76,6 +58,10 @@ const Recipe = () => {
     currentStep > 0 ? setCurrentStep(currentStep - 1) : setStarted(false);
   };
 
+  const next = () => {
+    currentStep < recipe.steps.length - 1 ? setCurrentStep(currentStep + 1) : setFinished(true);
+  };
+
   const timer = () => {
     if (!timers.some((timer: any) => timer.name === recipe.steps[currentStep].name)) {
       setTimers((oldTimers: any) => [
@@ -86,13 +72,8 @@ const Recipe = () => {
     console.log(timers);
   };
 
-  const next = () => {
-    currentStep < recipe.steps.length - 1 ? setCurrentStep(currentStep + 1) : setFinished(true);
-  };
-
   const handleFinish = () => {
     play();
-    console.log("TIMER FINISHED!");
   };
 
   const getPreparationTime = (time: number) => {
@@ -190,14 +171,7 @@ const Recipe = () => {
               ]}
             >
               <Meta avatar={<Avatar src={Clock} />} title={timer.name} />
-              <Timer
-                time={timer.time}
-                tickRate={1000}
-                onTick={handleTick}
-                onFinish={handleFinish}
-                running={timer.running}
-                name={timer.name}
-              />
+              <Timer time={timer.time} tickRate={1000} onFinish={handleFinish} running={timer.running} name={timer.name} />
             </Card>
           </div>
         ))}

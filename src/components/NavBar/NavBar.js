@@ -10,7 +10,6 @@ const Navbar = (props) => {
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   const service = new AuthService();
-  // Mimic lifecycle method when a component updates
   useEffect(() => {
     setLoggedInUser(props.userInSession);
   }, [props.userInSession]);
@@ -25,8 +24,6 @@ const Navbar = (props) => {
       props.getUser(null);
     });
   };
-
-  console.log(styles);
 
     return (
       <nav class={styles.navbar}>

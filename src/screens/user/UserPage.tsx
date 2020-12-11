@@ -58,7 +58,6 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
   const onChange = (value: any, filters: any) => {
     const filterRecipes = recipes.filter((recipe: any) => {
       let toReturn = true;
-      console.log(filters);
       for (let key in filters) {
         switch (key) {
           case "name":
@@ -98,7 +97,6 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
 
   const returnFormattedTitle = (title: string) => {
     if (title.length > 15) return title.substr(0, 15) + "...";
-    console.log(title);
     return title;
   };
 
@@ -108,7 +106,6 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
   };
 
   const getRecipeIngredientsOptions = (ingredients: any) => {
-    console.log(ingredients);
     let wordCount = 0;
     const ingredientsArray: any = [];
     ingredients.forEach((ingredient: any) => {

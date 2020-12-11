@@ -10,7 +10,6 @@ class RecipeService {
     });
   }
 
-  // Method to use in our SignUp component
   addRecipe = (data) => {
     return this.service
       .post("/recipe/add", data)

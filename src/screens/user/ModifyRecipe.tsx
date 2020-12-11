@@ -42,7 +42,6 @@ const NewRecipe = () => {
   }, []);
 
   const parseResponseAndSetForm = (values: any) => {
-    console.log(values);
     values.steps.forEach((step: any) => {
       if (!step.timer) {
         step.time = 0;
@@ -50,7 +49,6 @@ const NewRecipe = () => {
       } else step.time = moment(step.time * 1000).utcOffset(0);
     });
     values.preparationtime = moment(values.preparationtime * 1000).utcOffset(0);
-    console.log(values);
     setImage(values.image);
     form.setFieldsValue(values);
   };
@@ -72,7 +70,6 @@ const NewRecipe = () => {
       }
     } catch (e) {
       setLoading(false);
-      console.log(e);
       message.error("Something went wrong with the compilation of the forms, please fill all the required inputs");
       return;
     }
@@ -105,15 +102,7 @@ const NewRecipe = () => {
 
   const onChange = (value: any, values: any) => {
     setFormValue(values);
-    try {
-      const duration = values.steps[0].time.format("HH:mm:ss");
-      console.log(moment.duration(duration).asSeconds());
-    } catch (e) {}
   };
-
-  useEffect(() => {
-    console.log(formValue);
-  }, [formValue]);
 
   const isTimerSet = (index: number) => {
     try {
@@ -169,13 +158,7 @@ const NewRecipe = () => {
         </Form.Item>
 
         <Form.Item name="category" label="Category" rules={[{ required: true, message: "Please add a category" }]}>
-          <Select
-            showSearch
-            style={{ width: 200 }}
-            placeholder="Select a category"
-            optionFilterProp="children"
-            //filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-          >
+          <Select showSearch style={{ width: 200 }} placeholder="Select a category" optionFilterProp="children">
             {categoriesArray.map(category => (
               <Option key={category} value={category}>
                 {category}

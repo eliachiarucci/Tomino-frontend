@@ -76,16 +76,7 @@ const NewRecipe = () => {
 
   const onChange = (value: any, values: any) => {
     setFormValue(values);
-    try {
-      const duration = values.steps[0].time.format("HH:mm:ss");
-      console.log(moment.duration(duration).asSeconds());
-    } catch (e) {}
   };
-
-  useEffect(() => {
-    console.log(formValue);
-    console.log(form);
-  }, [formValue]);
 
   const isTimerSet = (index: number) => {
     try {
@@ -139,13 +130,7 @@ const NewRecipe = () => {
         </Form.Item>
 
         <Form.Item name="category" label="Category" rules={[{ required: true, message: "Please add a category" }]}>
-          <Select
-            showSearch
-            style={{ width: 200 }}
-            placeholder="Select a category"
-            optionFilterProp="children"
-            //filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-          >
+          <Select showSearch style={{ width: 200 }} placeholder="Select a category" optionFilterProp="children">
             {categoriesArray.map(category => (
               <Option key={category} value={category}>
                 {category}
