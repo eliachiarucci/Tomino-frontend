@@ -26,7 +26,7 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
   const [filteredRecipes, setFilteredRecipes] = useState<any>([]);
 
   useEffect(() => {
-    RecipeService.getRecipes().then((data) => {
+    RecipeService.getRecipes().then(data => {
       setRecipes(data);
       setFilteredRecipes(data);
     });
@@ -88,12 +88,12 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
 
   const layout = {
     labelCol: { span: 6 },
-    wrapperCol: { span: 17 },
+    wrapperCol: { span: 17 }
   };
 
   const filtersLayout = {
     labelCol: { span: 12 },
-    wrapperCol: { span: 12 },
+    wrapperCol: { span: 12 }
   };
 
   const returnFormattedTitle = (title: string) => {
@@ -134,7 +134,7 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
     "Fish",
     "Bread",
     "Gluten-free",
-    "Other",
+    "Other"
   ];
 
   return (
@@ -172,7 +172,7 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
           </Form.Item>
           <Form.Item name={["category"]} label="Category">
             <Select showSearch placeholder="Select a category" optionFilterProp="children" defaultValue={"All"}>
-              {categoriesArray.map((category) => (
+              {categoriesArray.map(category => (
                 <Option key={category} value={category}>
                   {category}
                 </Option>
@@ -204,14 +204,14 @@ const UserPage = ({ user, getUser, loggedInUser }: props) => {
                     style={{ width: "100%" }}
                     placeholder="Ingredients"
                     disabled
-                  ></Select>
+                  />
                 </Form.Item>
 
                 <Form.Item label="Difficulty">
                   <Rate value={recipe.difficulty} disabled />
                 </Form.Item>
 
-                <Form.Item label="Preparation Time">{getPreparationTime(recipe.preparationtime)}</Form.Item>
+                <Form.Item label="Preparation">{getPreparationTime(recipe.preparationtime)}</Form.Item>
 
                 <Form.Item label="Category">{recipe.category}</Form.Item>
               </Form>
